@@ -1,0 +1,65 @@
+import math
+
+def recommend_bearing(load, speed, life, load_capacity, temperature):
+    """
+    Recommend bearing dimensions, material, and type based on various criteria.
+
+    Args:
+    - load: Applied load on the bearing (N)
+    - speed: Rotational speed of the bearing (rpm)
+    - life: Desired bearing life (hours)
+    - load_capacity: Maximum load capacity of the bearing (N)
+    - temperature: Operating temperature of the bearing (°C)
+    - diameter: Diameter of the bearing (mm)
+
+    Returns:
+    - recommendation: Dictionary containing recommended dimensions, material, and type
+    """
+    # Calculate bearing dimensions
+    diameter = math.sqrt(load * speed * life) / 1000  # Convert from mm to meters
+    width = diameter / 4  # Example aspect ratio for bearing width
+
+    # Select bearing material
+    if load_capacity == 0 or speed == 0 or load == 0 or life == 0:
+        material = "Material can't be specified"
+    elif load_capacity > 10000 and speed < 1000 and temperature < 100:
+        material = "Steel"
+    elif load_capacity > 5000 and speed < 2000 and temperature < 150:
+        material = "Ceramic"
+    else:
+        material = "Polymer"
+
+    # Select bearing type
+    if load_capacity == 0 or speed == 0 :
+        bearing_type = "Bearing can't be specified"
+    elif load_capacity > 10000 and speed < 1000:
+        if diameter < 50:
+            bearing_type = "Deep Groove Ball Bearing"
+        else:
+            bearing_type = "Angular Contact Ball Bearing"
+    elif load_capacity > 5000 and speed < 2000:
+        bearing_type = "Cylindrical Roller Bearing"
+    else:
+        bearing_type = "Tapered Roller Bearing"
+
+    recommendation = {
+        "dimensions": {"diameter": diameter, "width": width},
+        "material": material,
+        "type": bearing_type
+    }
+
+    return recommendation
+
+# Example usage
+applied_load = int(input("Enter the applied load :-  "))  # N
+rotational_speed = int(input("Enter the rotational speed :-  "))  # rpm
+desired_life = int(input("Enter the desired life :-  "))  # hours
+max_load_capacity = int(input("Enter the max load capacity :-  "))  # N
+operating_temperature = int(input("Enter the operating temperature :-  "))  # °C
+
+recommendation = recommend_bearing(applied_load, rotational_speed, desired_life,
+                                   max_load_capacity, operating_temperature)
+print("Recommended bearing recommendation:")
+print("Dimensions:", recommendation["dimensions"])
+print("Material:", recommendation["material"])
+print("Type:", recommendation["type"])
